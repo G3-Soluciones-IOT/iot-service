@@ -1,0 +1,112 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# PATCH para gateway-service.yml
+# Agrega las siguientes secciones al archivo existente en config-service
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# 1. Dentro de spring.cloud.gateway.routes — agregar la ruta del iot-service:
+#
+#        - id: iot-service-route
+#          uri: lb://iot-service
+#          predicates:
+#            - Path=/iot-service/**,/api/v1/iot/**
+#
+# 2. Dentro de springdoc.swagger-ui.urls — agregar la entrada del iot-service:
+#
+#        - name: iot-service
+#          url: /iot-service/v3/api-docs
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# A continuación se muestra el bloque completo de rutas actualizado para
+# reemplazar el existente en gateway-service.yml:
+# ─────────────────────────────────────────────────────────────────────────────
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: iam-service-route
+          uri: lb://iam-service
+          predicates:
+            - Path=/iam-service/**,/api/v1/authentication/**,/api/v1/roles/**,/api/v1/users/**,/api/v1/jwks/**
+
+        - id: chat-service-route
+          uri: lb://chat-service
+          predicates:
+            - Path=/chat-service/**,/api/v1/chat/**,/api/v1/messages/**
+
+        - id: chat-service-websocket-route
+          uri: lb://chat-service
+          predicates:
+            - Path=/ws/**
+          metadata:
+            connect-timeout: 30000
+            response-timeout: 30000
+
+        - id: goals-service-route
+          uri: lb://goals-service
+          predicates:
+            - Path=/goals-service/**,/api/v1/goals/**
+
+        - id: mealplan-service-route
+          uri: lb://mealplan-service
+          predicates:
+            - Path=/mealplan-service/**,/api/v1/meal-plan/**
+
+        - id: nutritionist-service-route
+          uri: lb://nutritionist-service
+          predicates:
+            - Path=/nutritionist-service/**,/api/v1/nutritionists/**,/api/v1/nutritionist-patients/**
+
+        - id: profiles-service-route
+          uri: lb://profiles-service
+          predicates:
+            - Path=/profiles-service/**,/api/v1/user-profiles/**,/api/v1/profiles/**,/api/v1/objectives/**,/api/v1/allergies/**,/api/v1/activity-levels/**
+
+        - id: recipes-service-route
+          uri: lb://recipes-service
+          predicates:
+            - Path=/recipes-service/**,/api/v1/recipes/**,/api/v1/recipe-types/**,/api/v1/ingredients/**,/api/v1/favorite-recipes/**,/api/v1/categories/**
+
+        - id: recommendations-service-route
+          uri: lb://recommendations-service
+          predicates:
+            - Path=/recommendations-service/**,/api/v1/recommendations/**,/api/v1/recommendation-templates/**
+
+        - id: tracking-service-route
+          uri: lb://tracking-service
+          predicates:
+            - Path=/tracking-service/**,/api/v1/tracking-goals/**,/api/v1/tracking/**,/api/v1/meal-plan-entries/**,/api/v1/macronutrients/**
+
+        # ── NUEVO ──────────────────────────────────────────────────────────────
+        - id: iot-service-route
+          uri: lb://iot-service
+          predicates:
+            - Path=/iot-service/**,/api/v1/iot/**
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - name: iam-service
+        url: /iam-service/v3/api-docs
+      - name: chat-service
+        url: /chat-service/v3/api-docs
+      - name: goals-service
+        url: /goals-service/v3/api-docs
+      - name: mealplan-service
+        url: /mealplan-service/v3/api-docs
+      - name: nutritionist-service
+        url: /nutritionist-service/v3/api-docs
+      - name: profiles-service
+        url: /profiles-service/v3/api-docs
+      - name: recipes-service
+        url: /recipes-service/v3/api-docs
+      - name: recommendations-service
+        url: /recommendations-service/v3/api-docs
+      - name: tracking-service
+        url: /tracking-service/v3/api-docs
+      # ── NUEVO ────────────────────────────────────────────────────────────────
+      - name: iot-service
+        url: /iot-service/v3/api-docs

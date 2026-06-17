@@ -1,0 +1,37 @@
+server:
+  port: 8091
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-service:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: false
+    hostname: iot-service
+
+spring:
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          jwk-set-uri: "http://iam-service:8081/api/v1/jwks/.well-known/jwks.json"
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DATABASE}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: pe.edu.upc.iot_service.shared.infrastructure.persistence.jpa.configuration.strategy.SnakeCaseWithPluralizedTablePhysicalNamingStrategy
+    show-sql: true
+
+iot:
+  api-key:
+    salt: ${IOT_API_KEY_SALT:12}
+  device:
+    max-per-user: ${IOT_DEVICE_MAX_PER_USER:5}
