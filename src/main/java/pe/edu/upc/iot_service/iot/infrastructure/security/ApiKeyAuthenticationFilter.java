@@ -38,10 +38,9 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
-        // Only apply this filter to device ingestion endpoints
         String path = request.getRequestURI();
         return !(path.startsWith("/api/v1/iot/hydration") && request.getMethod().equals("POST"))
-            && !(path.startsWith("/api/v1/iot/weight")     && request.getMethod().equals("POST"));
+                && !(path.startsWith("/api/v1/iot/weight")     && request.getMethod().equals("POST"));
     }
 
     @Override
@@ -58,23 +57,20 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Extract deviceId from request body is not ideal in a filter,
-        // so we validate by scanning active devices matching this raw key.
-        // In production consider caching or a dedicated device-token table.
-     //   boolean authenticated = deviceRepository.findAll().stream()
-            //    .anyMatch(d -> d.isActive() && apiKeyService.matches(rawKey, d.getApiKeyHash()));
+        boolean authenticated = deviceRepository.findAll().stream()
+                .anyMatch(d -> d.isActive() && apiKeyService.matches(rawKey, d.getApiKeyHash()));
 
-       // if (!authenticated) {
+        if (!authenticated) {
             LOG.warn("Invalid API Key received for path {}", request.getRequestURI());
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid API Key");
             return;
         }
 
-//        var auth = new UsernamePasswordAuthenticationToken(
-//                "iot-device", null,
-  //              Collections.singletonList(new SimpleGrantedAuthority("ROLE_DEVICE")));
-   //     SecurityContextHolder.getContext().setAuthentication(auth);
+        var auth = new UsernamePasswordAuthenticationToken(
+                "iot-device", null,
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_DEVICE")));
+        SecurityContextHolder.getContext().setAuthentication(auth);
 
-  //      chain.doFilter(request, response);
-  //  }
+        chain.doFilter(request, response);
+    }
 }

@@ -53,13 +53,15 @@ public class WebSecurityConfiguration {
                     "/swagger-ui/**",
                     "/swagger-resources/**",
                     "/webjars/**",
-                    "/actuator/**"
+                    "/actuator/**",
+                        "/error" // <--- CRUCIAL: Agregar esto
                 ).permitAll()
+
                 // Device ingestion endpoints — authenticated by ApiKeyAuthenticationFilter
                 .requestMatchers(HttpMethod.POST, "/api/v1/iot/hydration").hasRole("DEVICE")
                 .requestMatchers(HttpMethod.POST, "/api/v1/iot/weight").hasRole("DEVICE")
                 // All other endpoints require a valid JWT
-                .anyRequest().authenticated()
+                    .anyRequest().authenticated()
             )
             // JWT validation via the IAM service JWKS endpoint
             .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> {}))

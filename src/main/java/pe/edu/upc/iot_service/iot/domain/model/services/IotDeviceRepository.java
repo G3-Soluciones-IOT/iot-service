@@ -10,4 +10,5 @@ public interface IotDeviceRepository {
     Optional<IotDevice> findByDeviceId(String deviceId);
     List<IotDevice> findByUserId(Long userId);
     boolean existsByDeviceId(String deviceId);
+    List<IotDevice> findAll();
 }

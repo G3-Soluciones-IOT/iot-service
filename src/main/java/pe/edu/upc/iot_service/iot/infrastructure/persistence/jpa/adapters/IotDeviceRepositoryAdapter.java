@@ -36,4 +36,9 @@ public class IotDeviceRepositoryAdapter implements IotDeviceRepository {
     public boolean existsByDeviceId(String deviceId) {
         return jpa.existsByDeviceId(deviceId);
     }
+
+    @Override
+    public List<IotDevice> findAll() {
+        return jpa.findAll();
+    }
 }
