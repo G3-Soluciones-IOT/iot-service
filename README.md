@@ -9,7 +9,7 @@ Recibe, valida y persiste los datos capturados por los dispositivos embebidos **
 
 | Aspecto | Detalle |
 |---|---|
-| Puerto | `8091` |
+| Puerto | `8093` |
 | Framework | Spring Boot 3.x – Java 25 |
 | Base de datos | PostgreSQL (instancia propia: `iot_db`) |
 | Autenticación dispositivos | `X-API-Key` header (BCrypt) |
@@ -145,7 +145,7 @@ docker run -e POSTGRES_DB=iot_db -e POSTGRES_PASSWORD=password -p 5433:5432 post
 ```
 
 La documentación Swagger estará disponible en:  
-`http://localhost:8091/swagger-ui/index.html`
+`http://localhost:8093/swagger-ui/index.html`
 
 ---
 

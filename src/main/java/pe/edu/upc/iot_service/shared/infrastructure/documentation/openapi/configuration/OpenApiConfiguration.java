@@ -8,18 +8,23 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 @Configuration
 public class OpenApiConfiguration {
 
     @Bean
-    public OpenAPI iotOpenApi() {
+    public OpenAPI iotOpenApi(
+            @Value("${documentation.openapi.server-url:}") String serverUrl,
+            @Value("${documentation.openapi.server-description:Public Gateway}") String serverDescription) {
         final String jwtScheme    = "bearerAuth";
         final String apiKeyScheme = "apiKeyAuth";
 
-        return new OpenAPI()
+        var openApi = new OpenAPI()
                 .info(apiInfo())
                 .externalDocs(externalDocs())
                 // Both security schemes available — endpoints pick one via @SecurityRequirement
@@ -39,6 +44,14 @@ public class OpenApiConfiguration {
                                         .type(SecurityScheme.Type.APIKEY)
                                         .in(SecurityScheme.In.HEADER)
                                         .description("API Key generated at device registration. Required for device ingestion endpoints.")));
+
+        if (StringUtils.hasText(serverUrl)) {
+            openApi.addServersItem(new Server()
+                    .url(serverUrl)
+                    .description(serverDescription));
+        }
+
+        return openApi;
     }
 
     private Info apiInfo() {
