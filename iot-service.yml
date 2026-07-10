@@ -16,7 +16,7 @@ spring:
     oauth2:
       resource-server:
         jwt:
-          jwk-set-uri: "http://iam-service:8081/api/v1/jwks/.well-known/jwks.json"
+          jwk-set-uri: ${LEGACY_JWT_JWK_SET_URI:http://iam-service:8081/api/v1/jwks/.well-known/jwks.json}
 
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DATABASE}
