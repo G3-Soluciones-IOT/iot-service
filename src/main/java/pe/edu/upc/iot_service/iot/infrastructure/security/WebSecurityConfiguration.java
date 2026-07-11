@@ -45,7 +45,7 @@ public class WebSecurityConfiguration {
         return new ApiKeyAuthenticationFilter(deviceRepository, apiKeyService);
     }
 
-    @Bean
+  /*  @Bean
     public SecurityFilterChain filterChain(
             HttpSecurity http,
             @Value("${legacy.jwt.issuer:iam-service}") String legacyJwtIssuer
@@ -81,6 +81,36 @@ public class WebSecurityConfiguration {
                     jwtConfigurer.jwtAuthenticationConverter(IotJwtAuthenticationConverter.jwtAuthenticationConverter())))
             // API Key filter runs before the standard auth filter
             .addFilterBefore(apiKeyAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+    /*
+
+   */
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        // Swagger / actuator — public
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/swagger-resources/**",
+                                "/webjars/**",
+                                "/actuator/**",
+                                "/error"
+
+                        ).permitAll()
+                        .anyRequest().permitAll()
+                );
+        //    .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer ->
+        //      jwtConfigurer.jwtAuthenticationConverter(IotJwtAuthenticationConverter.jwtAuthenticationConverter())))
+        // API Key filter runs before the standard auth filter
+        //      .addFilterBefore(apiKeyAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
